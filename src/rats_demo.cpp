@@ -106,6 +106,22 @@ int rats_app_sts(unsigned char *data, int bits)
 	if (!NonOverlappingTemplateMatchings(alpha, data, bits, 9))	return 0;
 	time_e = clock();
 	printf("RATS test flag is %d, cost time %.4f.\n", 16, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//17-离散傅里叶检测
+	time_s = clock();
+	if (!OverlappingTemplateMatchings(alpha, data, bits, 9))	return 0;
+	time_e = clock();
+	printf("RATS test flag is %d, cost time %.4f.\n", 17, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//18-离散傅里叶检测
+	time_s = clock();
+	if (!RandomExcursions(alpha, data, bits))	return 0;
+	time_e = clock();
+	printf("RATS test flag is %d, cost time %.4f.\n", 18, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+
+	//19-离散傅里叶检测
+	time_s = clock();
+	if (!RandomExcursionsVariant(alpha, data, bits))	return 0;
+	time_e = clock();
+	printf("RATS test flag is %d, cost time %.4f.\n", 19, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 
 	return 1;
 }
@@ -119,7 +135,7 @@ int main()
 	int flag;
 	clock_t time_s, time_e;
 //printf("1111111111111\n");
-	if (!(fp = fopen("../data/data.e", "rb")))
+	if (!(fp = fopen("../data/data.pi", "rb")))
 	{
 		printf("File open error!\n");
 		goto END;
@@ -139,7 +155,7 @@ int main()
 			}
 		}
 	}
-	#define ROUND	1
+	#define ROUND	10
 	//printf("1111111111111\n");
 	time_s = clock();
 	for (int i = 0; i < ROUND; i++)

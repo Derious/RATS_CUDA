@@ -18,7 +18,8 @@ OBJ = $(OBJDIR)/assess.o $(OBJDIR)/frequency.o $(OBJDIR)/blockFrequency.o \
        $(OBJDIR)/linearComplexity.o \
       $(OBJDIR)/dfft.o $(OBJDIR)/cephes.o $(OBJDIR)/matrix.o $(OBJDIR)/rats_app.o \
 	  $(OBJDIR)/RunsDistribution.o $(OBJDIR)/linearComplexitycuda.o \
-	  $(OBJDIR)/nonOverlappingTemplateMatchings.o
+	  $(OBJDIR)/nonOverlappingTemplateMatchings.o $(OBJDIR)/overlappingTemplateMatchings.o \
+	  $(OBJDIR)/randomExcursions.o $(OBJDIR)/randomExcursionsVariant.o
 #  -L/usr/local/cuda/lib64 -lcuda -lcudart -lcublas -lcurand -lcudnn
 assess: $(OBJ)
 	$(CC) -o $@ $(OBJ) -lm -lcudart -lcuda $(NVCCFLAG) -lstdc++
@@ -52,9 +53,9 @@ $(OBJDIR)/nonOverlappingTemplateMatchings.o: \
         $(SRCDIR)/nonOverlappingTemplateMatchings.c cephes.h rats.h
 	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/nonOverlappingTemplateMatchings.c
 
-# $(OBJDIR)/overlappingTemplateMatchings.o: \
-#         $(SRCDIR)/overlappingTemplateMatchings.c defs.h externs.h utilities.h
-# 	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/overlappingTemplateMatchings.c
+$(OBJDIR)/overlappingTemplateMatchings.o: \
+        $(SRCDIR)/overlappingTemplateMatchings.c cephes.h rats.h
+	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/overlappingTemplateMatchings.c
 
 $(OBJDIR)/universal.o: $(SRCDIR)/MaurerUniversal.c cephes.h rats.h
 	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/MaurerUniversal.c
@@ -62,11 +63,11 @@ $(OBJDIR)/universal.o: $(SRCDIR)/MaurerUniversal.c cephes.h rats.h
 $(OBJDIR)/approximateEntropy.o: $(SRCDIR)/ApproximateEntropy.c cephes.h rats.h
 	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/ApproximateEntropy.c
 
-# $(OBJDIR)/randomExcursions.o: $(SRCDIR)/randomExcursions.c defs.h externs.h
-# 	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/randomExcursions.c
+$(OBJDIR)/randomExcursions.o: $(SRCDIR)/randomExcursions.c cephes.h rats.h
+	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/randomExcursions.c
 
-# $(OBJDIR)/randomExcursionsVariant.o: $(SRCDIR)/randomExcursionsVariant.c defs.h externs.h
-# 	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/randomExcursionsVariant.c
+$(OBJDIR)/randomExcursionsVariant.o: $(SRCDIR)/randomExcursionsVariant.c cephes.h rats.h
+	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/randomExcursionsVariant.c
 
 $(OBJDIR)/serial.o: $(SRCDIR)/Serial.c cephes.h rats.h
 	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/Serial.c

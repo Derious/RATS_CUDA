@@ -228,6 +228,24 @@ int DiscreteFourierTransform(double alpha, unsigned char *data, int bits, DFT_V 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 int NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int m);
 
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+               O V E R L A P P I N G  T E M P L A T E  T E S T
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+int OverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int m);
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+                     R A N D O M  E X C U R S I O N S  T E S T
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+int RandomExcursions(double alpha, unsigned char *data, int bits);
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+            R A N D O M  E X C U R S I O N S  V A R I A N T  T E S T
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+int RandomExcursionsVariant(double alpha, unsigned char *data, int bits);
+
 #ifdef __cplusplus
 }			/* end of __cplusplus */
 #endif

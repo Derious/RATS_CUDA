@@ -44,3 +44,8 @@ Copyright (C) Wuhan University 2019
 "add nonOverlappingTemplateMatchings" 
 
     在文件nonOverlappingTemplateMatchings.c中添加 N O N O V E R L A P P I N G  T E M P L A T E  T E S T ，还未做优化，该测试在进行1000000bit数据量的情况下，耗时约2.103s。
+
+"2021.8.11 1:20"
+
+    添加了OverlappingTemplateMatchings.c randomExcursions.c randomExcursionsVariant.c三种测试方法
+    在未做优化的情况下，做完全的19组实验，使用1000000bit数据，所花费的时间为3.6145s，对比sts：5.3788s

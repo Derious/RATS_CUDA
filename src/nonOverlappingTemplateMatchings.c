@@ -38,7 +38,7 @@ NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int
 	M = n/N;
 
 	if ( (Wj = (unsigned int*)calloc(N, sizeof(unsigned int))) == NULL ) {
-		return -1;
+		return 0;
 	}
 	lambda = (M-m+1)/pow(2, m);
 	varWj = M*(1.0/pow(2.0, m) - (2.0*m-1.0)/pow(2.0, 2.0*m));
