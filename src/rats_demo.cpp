@@ -134,7 +134,7 @@ int main()
 			}
 		}
 	}
-	#define ROUND	10
+	#define ROUND	1000
 	//printf("1111111111111\n");
 	time_s = clock();
 	for (int i = 0; i < ROUND; i++)
