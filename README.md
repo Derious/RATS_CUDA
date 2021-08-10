@@ -42,4 +42,5 @@ Copyright (C) Wuhan University 2019
     “all” 更新之后，使用的时间为1387.165s。
 
 "add nonOverlappingTemplateMatchings" 
+
     在文件nonOverlappingTemplateMatchings.c中添加 N O N O V E R L A P P I N G  T E M P L A T E  T E S T ，还未做优化，该测试在进行1000000bit数据量的情况下，耗时约2.103s。
