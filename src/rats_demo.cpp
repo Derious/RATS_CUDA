@@ -101,6 +101,11 @@ int rats_app_sts(unsigned char *data, int bits)
 	if (!DiscreteFourierTransform(alpha, data, bits, NULL))	return 0;
 	time_e = clock();
 	printf("RATS test flag is %d, cost time %.4f.\n", 15, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//16-离散傅里叶检测
+	time_s = clock();
+	if (!NonOverlappingTemplateMatchings(alpha, data, bits, 9))	return 0;
+	time_e = clock();
+	printf("RATS test flag is %d, cost time %.4f.\n", 16, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 
 	return 1;
 }
@@ -134,7 +139,7 @@ int main()
 			}
 		}
 	}
-	#define ROUND	1000
+	#define ROUND	1
 	//printf("1111111111111\n");
 	time_s = clock();
 	for (int i = 0; i < ROUND; i++)

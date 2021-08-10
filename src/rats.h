@@ -1,6 +1,15 @@
 #ifndef _RATS_H_
 #define _RATS_H_
 
+#define MAX(x,y)             ((x) <  (y)  ? (y)  : (x))
+#define MIN(x,y)             ((x) >  (y)  ? (y)  : (x))
+#define isNonPositive(x)     ((x) <= 0.e0 ?   1  : 0)
+#define isPositive(x)        ((x) >  0.e0 ?   1 : 0)
+#define isNegative(x)        ((x) <  0.e0 ?   1 : 0)
+#define isGreaterThanOne(x)  ((x) >  1.e0 ?   1 : 0)
+#define isZero(x)            ((x) == 0.e0 ?   1 : 0)
+#define isOne(x)             ((x) == 1.e0 ?   1 : 0)
+
 #ifdef __cplusplus
 extern "C"{	/* start of __cplusplus */
 #endif
@@ -213,6 +222,11 @@ typedef struct _st_value_DFT
 } DFT_V;
 
 int DiscreteFourierTransform(double alpha, unsigned char *data, int bits, DFT_V *value);
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+          N O N O V E R L A P P I N G  T E M P L A T E  T E S T
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+int NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int m);
 
 #ifdef __cplusplus
 }			/* end of __cplusplus */

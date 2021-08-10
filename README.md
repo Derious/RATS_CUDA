@@ -33,3 +33,13 @@ Its purpose is not to be used for practical engineering applications, but to pro
 # Copyright
 
 Copyright (C) Wuhan University 2019
+
+
+# Source Control
+"all" 更新了cuda实现的LinearComplexity，采用并行优化，具体优化在于分块，并行处理各个块的线性复杂度。
+
+    sts-2.1。2中，进行1000轮1000000bit测试使用的时间为5005.1961s。
+    “all” 更新之后，使用的时间为1387.165s。
+
+"add nonOverlappingTemplateMatchings" 
+    在文件nonOverlappingTemplateMatchings.c中添加 N O N O V E R L A P P I N G  T E M P L A T E  T E S T ，还未做优化，该测试在进行1000000bit数据量的情况下，耗时约2.103s。

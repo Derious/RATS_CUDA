@@ -17,7 +17,8 @@ OBJ = $(OBJDIR)/assess.o $(OBJDIR)/frequency.o $(OBJDIR)/blockFrequency.o \
       $(OBJDIR)/approximateEntropy.o $(OBJDIR)/Autocorrelation.o\
        $(OBJDIR)/linearComplexity.o \
       $(OBJDIR)/dfft.o $(OBJDIR)/cephes.o $(OBJDIR)/matrix.o $(OBJDIR)/rats_app.o \
-	  $(OBJDIR)/RunsDistribution.o $(OBJDIR)/linearComplexitycuda.o
+	  $(OBJDIR)/RunsDistribution.o $(OBJDIR)/linearComplexitycuda.o \
+	  $(OBJDIR)/nonOverlappingTemplateMatchings.o
 #  -L/usr/local/cuda/lib64 -lcuda -lcudart -lcublas -lcurand -lcudnn
 assess: $(OBJ)
 	$(CC) -o $@ $(OBJ) -lm -lcudart -lcuda $(NVCCFLAG) -lstdc++
@@ -47,9 +48,9 @@ $(OBJDIR)/discreteFourierTransform.o: $(SRCDIR)/DiscreteFourierTransform.c \
         cephes.h rats.h
 	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/DiscreteFourierTransform.c
 
-# $(OBJDIR)/nonOverlappingTemplateMatchings.o: \
-#         $(SRCDIR)/nonOverlappingTemplateMatchings.c defs.h externs.h utilities.h
-# 	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/nonOverlappingTemplateMatchings.c
+$(OBJDIR)/nonOverlappingTemplateMatchings.o: \
+        $(SRCDIR)/nonOverlappingTemplateMatchings.c cephes.h rats.h
+	$(CC) -o $@ $(GCCFLAGS) $(SRCDIR)/nonOverlappingTemplateMatchings.c
 
 # $(OBJDIR)/overlappingTemplateMatchings.o: \
 #         $(SRCDIR)/overlappingTemplateMatchings.c defs.h externs.h utilities.h

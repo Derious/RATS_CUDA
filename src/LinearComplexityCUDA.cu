@@ -9,9 +9,6 @@
 
 #define BITS	1000000
 #define ROUND	1
-// #ifndef GET_EPSILON
-// #define GET_EPSILON(d, i)	(((d)[(i) / 8] >> (7 - (i) % 8)) & 1)
-// #endif // !GET_EPSILON
 
 typedef struct para{
 	int M;
@@ -44,10 +41,6 @@ __global__ void ReductionSum(double *d_partial_sum, gpu_param *M_gpu, unsigned c
 	int L , m , d , N_;
 
 if(threadId<N){
-//	printf("threadid:%d\n",threadId);
-
-
-
 
 	unsigned char *T = NULL, *P = NULL, *B_ = NULL, *C = NULL;
 	T = (unsigned char*)malloc(M*sizeof(unsigned char));
@@ -110,63 +103,10 @@ if(threadId<N){
 
 
 }
-
-	// }
-	// //传global memory数据到shared memory
-	// partialSum[tid]=d_a[i];
-
-
-
-	// //传输同步
-	// __syncthreads();
-	
-	// //在共享存储器中进行规约
-	// for(int stride = blockDim.x/2; stride > 0; stride/=2)
-	// {
-	// 	if(tid<stride) partialSum[tid]+=partialSum[tid+stride];
-	// 	__syncthreads();
-	// }
-	// //将当前block的计算结果写回输出数组
-	// if(tid==0)  
-	// 	d_partial_sum[blockIdx.x] = partialSum[0];
 }
  
 double LinearComplexity(double alpha, unsigned char *data, int bits, int M, double u, int sign, LinearComplexity_V *value)
 {
-	// ////////////////////////////读写文件测试
-	// unsigned char data[BITS / 8];
-	// unsigned char temp[1024];
-	// int b, i, rlen;
-	// FILE *fp;
-	// int flag;
-	// clock_t time_s, time_e;
-	// printf("1111111111111\n");
-	// if (!(fp = fopen("./data.e", "rb")))
-	// {
-	// 	printf("File open error!\n");
-	// }
-	// printf("1111111111111\n");
-	// memset(data, 0, BITS / 8);
-	// b = 0;
-	// while (b < BITS)
-	// {
-	// 	rlen = fread(temp, 1, 1024, fp);
-	// 	for (i = 0; i < rlen && b < BITS; i++)
-	// 	{
-	// 		if (temp[i] == '0' || temp[i] == '1')
-	// 		{
-	// 			data[b / 8] = (data[b / 8] << 1) + (temp[i] - '0');
-	// 			b++;
-	// 		}
-	// 	}
-	// }
-
-	// //for(int i=0;i<10;i++) printf("data:%x\n",data[i]);
-
-
-	// ///////////////////////////
-
-
 	int N = 0;
 	N = bits / M;
 	int blocksPerGrid = (N + 512 -1) / 512;
@@ -193,7 +133,7 @@ double LinearComplexity(double alpha, unsigned char *data, int bits, int M, doub
 	double *d_partial_sum;
 	gpu_param *M_gpu;
 	unsigned char *data_gpu;
-	start = clock();
+//	start = clock();
 
 	cudaMalloc((void**)&d_partial_sum,N*size);
 	cudaMalloc((void**)&M_gpu,sizeof(gpu_param));
@@ -202,10 +142,6 @@ double LinearComplexity(double alpha, unsigned char *data, int bits, int M, doub
 	//把数据从Host传到Device
 	cudaMemcpy(M_gpu, &M_cpu, sizeof(gpu_param), cudaMemcpyHostToDevice);
 	cudaMemcpy(data_gpu, data, (BITS / 8)*sizeof(unsigned char), cudaMemcpyHostToDevice);
-
-
-	//cudaMemcpyToSymbol(v, v_cpu, 7*sizeof(int));
-	//printf("111111111\n");
 
 
 	//调用内核函数
@@ -244,29 +180,12 @@ double LinearComplexity(double alpha, unsigned char *data, int bits, int M, doub
 		}
 		//p_value = cephes_igamc(3.0, v_obs / 2.0);
 
-  	end = clock();
+  //	end = clock();
 	  
-	duration = (double)(end-start)/CLOCKS_PER_SEC/ROUND;
+	//duration = (double)(end-start)/CLOCKS_PER_SEC/ROUND;
 
-	printf("time1 = %f\n",duration);
+	//printf("time1 = %f\n",duration);
 	//printf("v_obs = %f\n",v_obs);
-
-	// //将部分和求和
-	// long sum=0;
-    // for (int i=0; i < blocksPerGrid; ++i)  sum += h_partial_sum[i];
-
-	// cout<<"sum1="<<sum<<" time1="<<duration<<endl;
-
-	// start = clock();
-	// sum = 0;
-	// for (long i = 0; i < N; i++)
-	// {
-	// 	sum+=h_a[i];
-	// 	/* code */
-	// }
-	// end = clock();
-	// duration = (double)(end-start)/CLOCKS_PER_SEC;
- 	// cout<<"sum2="<<sum<<" time2="<<duration<<endl;
 	
 	//释放显存空间
 	cudaFree(d_partial_sum);
