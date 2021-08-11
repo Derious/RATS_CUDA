@@ -94,7 +94,7 @@ int OverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, in
 		//fprintf(stats[TEST_OVERLAPPING], "WARNING:  P_VALUE IS OUT OF RANGE.\n");
 
 	free(sequence);
-    printf("p_value: %f\n",p_value);
+   // printf("p_value: %f\n",p_value);
     if (p_value < alpha)
 		return 0;
 	return 1;

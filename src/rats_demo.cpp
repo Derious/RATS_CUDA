@@ -21,107 +21,107 @@ int rats_app_sts(unsigned char *data, int bits)
 	time_s = clock();
 	if (!MonobitFrequency(alpha, data, bits, NULL))			return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 1, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 1, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//2-块内频数检测
 	time_s = clock();
 	if (!BlockFrequency(alpha, data, bits, 128, NULL))		return 0;
-	if (!BlockFrequency(alpha, data, bits, 100, NULL))		return 0;
+	//if (!BlockFrequency(alpha, data, bits, 100, NULL))		return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 2, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 2, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//3-扑克检测
-	time_s = clock();
+	// time_s = clock();
 
-	if (!Poker(alpha, data, bits, 4, NULL))					return 0;
-	if (!Poker(alpha, data, bits, 8, NULL))					return 0;
-	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 3, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	// if (!Poker(alpha, data, bits, 4, NULL))					return 0;
+	// if (!Poker(alpha, data, bits, 8, NULL))					return 0;
+	// time_e = clock();
+	// printf("RATS test flag is %d, cost time %.4f.\n", 3, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//4-序列检测
 	time_s = clock();
 	if (!Serial(alpha, data, bits, 2, NULL))				return 0;
 	if (!Serial(alpha, data, bits, 5, NULL))				return 0;
 	if (!Serial(alpha, data, bits, 16, NULL))				return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 4, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 4, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//5-游程总数检测
 	time_s = clock();
 	if (!Runs(alpha, data, bits, NULL))						return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 5, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 5, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	////6-游程分布检测
-	time_s = clock();
-	if (!RunsDistribution(alpha, data, bits, NULL))			return 0;
-	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 6, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	// time_s = clock();
+	// if (!RunsDistribution(alpha, data, bits, NULL))			return 0;
+	// time_e = clock();
+	// printf("RATS test flag is %d, cost time %.4f.\n", 6, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//7-块内最大1游程检测
 	time_s = clock();
 	if (!LongestRun(alpha, data, bits, NULL))				return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 7, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 7, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//8-二元推导检测
-	time_s = clock();
-	if (!BinaryDerivative(alpha, data, bits, 3, NULL))		return 0;
-	if (!BinaryDerivative(alpha, data, bits, 7, NULL))		return 0;
-	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 8, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	// time_s = clock();
+	// if (!BinaryDerivative(alpha, data, bits, 3, NULL))		return 0;
+	// if (!BinaryDerivative(alpha, data, bits, 7, NULL))		return 0;
+	// time_e = clock();
+	// printf("RATS test flag is %d, cost time %.4f.\n", 8, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	////9-自相关检测
-	time_s = clock();
-	if (!Autocorrelation(alpha, data, bits, 1, NULL))		return 0;
-	if (!Autocorrelation(alpha, data, bits, 2, NULL))		return 0;
-	if (!Autocorrelation(alpha, data, bits, 8, NULL))		return 0;
-	if (!Autocorrelation(alpha, data, bits, 16, NULL))		return 0;
-	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 9, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	// time_s = clock();
+	// if (!Autocorrelation(alpha, data, bits, 1, NULL))		return 0;
+	// if (!Autocorrelation(alpha, data, bits, 2, NULL))		return 0;
+	// if (!Autocorrelation(alpha, data, bits, 8, NULL))		return 0;
+	// if (!Autocorrelation(alpha, data, bits, 16, NULL))		return 0;
+	// time_e = clock();
+	// printf("RATS test flag is %d, cost time %.4f.\n", 9, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//10-矩阵秩检测
 	time_s = clock();
 	if (!MatrixRank(alpha, data, bits, 32, NULL))			return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 10, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 10, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//11-累加和检测
 	time_s = clock();
 	if (!Cumulative(alpha, data, bits, NULL))				return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 11, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 11, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//12-近似熵检测
 	time_s = clock();
 	if (!ApproximateEntropy(alpha, data, bits, 10, NULL))	return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 12, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 12, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//13-线性复杂度检测
 	time_s = clock();
 	if (!LinearComplexity1(alpha, data, bits, 500, NULL))	return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 13, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 13, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//14-Maurer通用统计检测
 	time_s = clock();
 	if (!MaurerUniversal(alpha, data, bits, NULL))			return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 14, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+//	printf("RATS test flag is %d, cost time %.4f.\n", 14, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//15-离散傅里叶检测
 	time_s = clock();
 	if (!DiscreteFourierTransform(alpha, data, bits, NULL))	return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 15, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 15, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//16-离散傅里叶检测
 	time_s = clock();
-	if (!NonOverlappingTemplateMatchings(alpha, data, bits, 9))	return 0;
+	if (!NonOverlappingTemplateMatchingsCUDA(alpha, data, bits, 9))	return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 16, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 16, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//17-离散傅里叶检测
 	time_s = clock();
 	if (!OverlappingTemplateMatchings(alpha, data, bits, 9))	return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 17, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 17, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	//18-离散傅里叶检测
 	time_s = clock();
 	if (!RandomExcursions(alpha, data, bits))	return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 18, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 18, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 
 	//19-离散傅里叶检测
 	time_s = clock();
 	if (!RandomExcursionsVariant(alpha, data, bits))	return 0;
 	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 19, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	//printf("RATS test flag is %d, cost time %.4f.\n", 19, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 
 	return 1;
 }

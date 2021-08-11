@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "limits": "c",
-        "rats.h": "c"
+        "rats.h": "c",
+        "algorithm": "c"
     }
 }

@@ -49,3 +49,8 @@ Copyright (C) Wuhan University 2019
 
     添加了OverlappingTemplateMatchings.c randomExcursions.c randomExcursionsVariant.c三种测试方法
     在未做优化的情况下，做完全的19组实验，使用1000000bit数据，所花费的时间为3.6145s，对比sts：5.3788s
+
+"2021.8.11 14:31"
+
+    为nonOverlappingTemplateMatchings进行了并行优化，按照分块并行计算，其余地方并没有进行修改，只是将最终p-value的计算结果移至cpu进行操作，
+    在gpu中只能进行简单的运算。

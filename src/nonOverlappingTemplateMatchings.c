@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <time.h>
 
 #include "cephes.h"
 #include "rats.h"
@@ -33,6 +34,11 @@ NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int
 	int				i, j, jj, k, match, SKIP, M, N, K = 5;
 	char			directory[100];
 	unsigned char		*sequence = NULL;
+	unsigned char		sequence1[(MIN(MAXNUMOFTEMPLATES, numOfTemplates[m]))][m] ;
+	int i_,k_;
+
+
+	time_t s,e;
 
 	N = 8;
 	M = n/N;
@@ -45,8 +51,7 @@ NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int
 	sprintf(directory, "../templates/template%d", m);
 
 	if ( ((isNegative(lambda)) || (isZero(lambda))) ||
-		 ((fp = fopen(directory, "r")) == NULL) ||
-		 ((sequence = (unsigned char *) calloc(m, sizeof(unsigned char))) == NULL) ) {
+		 ((fp = fopen(directory, "r")) == NULL) || (((sequence = (unsigned char*)calloc(MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])*m, sizeof(unsigned char))) == NULL )) ) {
 		if ( sequence != NULL )
 			free(sequence);
 	}
@@ -70,15 +75,31 @@ NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int
 		}
 		pi[K] = 1 - sum;
 
+	/////////////////////////////////////////////
+	for (i_ = 0; i_ < (MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])); i_++){
+			for (k_=0; k_<m; k_++ ) {
+				fscanf(fp, "%d", &bit);
+				sequence1[i_][k_] = bit;
+				sequence[i_*m+k_] = bit;
+			}
+	}
+			printf("N:%d , M:%d , m:%d , lam:%f , var:%f\n",N,M,m,lambda,varWj);
+	// for (i_ = 0; i_ < (MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])); i_++){
+	// 	for (k_=0; k_<m; k_++ ) {
+	// 		printf("%x",sequence[i_*m+k_]);
+	// 		}
+	// 		printf("\n");
+	// }
+
+	/////////////////////////////////////////////
 		for( jj=0; jj<MIN(MAXNUMOFTEMPLATES, numOfTemplates[m]); jj++ ) {
 			sum = 0;
-
-			for ( k=0; k<m; k++ ) {
-				fscanf(fp, "%d", &bit);
-				sequence[k] = bit;
-				//fprintf(stats[TEST_NONPERIODIC], "%d", sequence[k]);
+			for (k_=0; k_<m; k_++ ) {
+				printf("%x",sequence[jj*m+k_]);
 			}
-		//	fprintf(stats[TEST_NONPERIODIC], " ");
+			printf("\n");
+
+			s = clock();
 			for ( k=0; k<=K; k++ )
 				nu[k] = 0;
 			for ( i=0; i<N; i++ ) {
@@ -86,7 +107,7 @@ NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int
 				for ( j=0; j<M-m+1; j++ ) {
 					match = 1;
 					for ( k=0; k<m; k++ ) {
-						if ( (int)sequence[k] != (int)GET_EPSILON(data,i*M+j+k) ) {
+						if ( (int)sequence[jj*m+k] != (int)GET_EPSILON(data,i*M+j+k) ) {
 							match = 0;
 							break;
 						}
@@ -98,6 +119,8 @@ NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int
 				}
 				Wj[i] = W_obs;
 			}
+			e = clock();
+			//printf("round time:%f\n",(double)(e-s)/CLOCKS_PER_SEC);
 			sum = 0;
 			chi2 = 0.0;                                   /* Compute Chi Square */
 			for ( i=0; i<N; i++ ) {
@@ -110,24 +133,24 @@ NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int
 			p_value = cephes_igamc(N/2.0, chi2/2.0);
 		
 			if ( isNegative(p_value) || isGreaterThanOne(p_value) )
-			//	fprintf(stats[TEST_NONPERIODIC], "\t\tWARNING:  P_VALUE IS OUT OF RANGE.\n");
+				printf("\t\tWARNING:  P_VALUE IS OUT OF RANGE.\n");
 
-		//	fprintf(stats[TEST_NONPERIODIC], "%9.6f %f %s %3d\n", chi2, p_value, p_value < ALPHA ? "FAILURE" : "SUCCESS", jj);
+			printf("%9.6f %f %s %3d\n", chi2, p_value, p_value < alpha ? "FAILURE" : "SUCCESS", jj);
 			if ( SKIP > 1 )
 				fseek(fp, (long)(SKIP-1)*2*m, SEEK_CUR);
-		//	fprintf(results[TEST_NONPERIODIC], "%f\n", p_value); fflush(results[TEST_NONPERIODIC]);
 		}
 	}
-	
-//	fprintf(stats[TEST_NONPERIODIC], "\n"); fflush(stats[TEST_NONPERIODIC]);
+
 	if ( sequence != NULL )
 		free(sequence);
 
 	free(Wj);
+
     if ( fp != NULL )
         fclose(fp);
-    printf("p_value: %f\n",p_value);
+   // printf("p_value: %f\n",p_value);
     if (p_value < alpha)
 		return 0;
 	return 1;
 }
+

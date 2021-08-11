@@ -227,7 +227,7 @@ int DiscreteFourierTransform(double alpha, unsigned char *data, int bits, DFT_V 
           N O N O V E R L A P P I N G  T E M P L A T E  T E S T
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 int NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int m);
-
+int NonOverlappingTemplateMatchingsCUDA(double alpha, unsigned char *data, int bits, int m);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
                O V E R L A P P I N G  T E M P L A T E  T E S T

@@ -137,11 +137,11 @@ double LinearComplexity(double alpha, unsigned char *data, int bits, int M, doub
 
 	cudaMalloc((void**)&d_partial_sum,N*size);
 	cudaMalloc((void**)&M_gpu,sizeof(gpu_param));
-	cudaMalloc((void**)&data_gpu,(BITS / 8)*sizeof(unsigned char));
+	cudaMalloc((void**)&data_gpu,(bits / 8)*sizeof(unsigned char));
 	//printf("111111111\n");
 	//把数据从Host传到Device
 	cudaMemcpy(M_gpu, &M_cpu, sizeof(gpu_param), cudaMemcpyHostToDevice);
-	cudaMemcpy(data_gpu, data, (BITS / 8)*sizeof(unsigned char), cudaMemcpyHostToDevice);
+	cudaMemcpy(data_gpu, data, (bits / 8)*sizeof(unsigned char), cudaMemcpyHostToDevice);
 
 
 	//调用内核函数

@@ -120,8 +120,8 @@ RandomExcursions(double alpha, unsigned char *data, int bits)
 			if ( isNegative(p_value) || isGreaterThanOne(p_value) )
 				printf("WARNING:  P_VALUE IS OUT OF RANGE.\n");
 
-			printf("%s\t\tx = %2d chi^2 = %9.6f p_value = %f\n",
-					p_value < alpha ? "FAILURE" : "SUCCESS", x, sum, p_value);
+			// printf("%s\t\tx = %2d chi^2 = %9.6f p_value = %f\n",
+			// 		p_value < alpha ? "FAILURE" : "SUCCESS", x, sum, p_value);
 			//fprintf(results[TEST_RND_EXCURSION], "%f\n", p_value); fflush(results[TEST_RND_EXCURSION]);
 		}
 	} 

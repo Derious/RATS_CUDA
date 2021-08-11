@@ -60,8 +60,8 @@ int RandomExcursionsVariant(double alpha, unsigned char *data, int bits)
 
 			if ( isNegative(p_value) || isGreaterThanOne(p_value) )
 				printf("\t\t(b) WARNING: P_VALUE IS OUT OF RANGE.\n");
-			printf("%s\t\t", p_value < alpha ? "FAILURE" : "SUCCESS");
-			printf("(x = %2d) Total visits = %4d; p-value = %f\n", x, count, p_value);
+			// printf("%s\t\t", p_value < alpha ? "FAILURE" : "SUCCESS");
+			// printf("(x = %2d) Total visits = %4d; p-value = %f\n", x, count, p_value);
 			//printf(results[TEST_RND_EXCURSION_VAR], "%f\n", p_value); fflush(results[TEST_RND_EXCURSION_VAR]);
 		}
 	}
