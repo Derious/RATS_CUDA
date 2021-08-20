@@ -34,6 +34,7 @@ int ApproximateEntropy(double alpha, unsigned char *data, int bits, int m, Appro
 	r = 0;
 
 	for (blockSize = m; blockSize <= m + 1; blockSize++) {
+		//printf("111111111111111\n");
 		if (blockSize == 0) {
 			ApEn[0] = 0.00;
 			r++;
@@ -74,7 +75,7 @@ int ApproximateEntropy(double alpha, unsigned char *data, int bits, int m, Appro
 	v_obs = 2.0*bits*(log(2) - apen);
 	p_value = cephes_igamc(pow(2, m - 1), v_obs / 2.0);
 
-	//TODO: return value & ©исе╩╞
+	//TODO: return value & О©╫О©╫О©╫е╩О©╫
 
 	if (p_value < alpha)
 		return 0;

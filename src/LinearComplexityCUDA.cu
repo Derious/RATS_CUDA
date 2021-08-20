@@ -39,6 +39,7 @@ __global__ void ReductionSum(double *d_partial_sum, gpu_param *M_gpu, unsigned c
 //	int i = threadIdx.x + blockIdx.x * blockDim.x;
 	//int tid = threadIdx.x;
 	int L , m , d , N_;
+	int i , j;
 
 if(threadId<N){
 
@@ -64,27 +65,27 @@ if(threadId<N){
 		{
 			d = GET_EPSILON(data, threadId*M + N_);
 			//printf("d: %d\n",d);
-			for (int j = 1; j <= L; j++)
+			for ( j = 1; j <= L; j++)
 				d += C[j] * GET_EPSILON(data, threadId*M + N_ - j);
 			if (d = d % 2)
 			{
-				for (int j = 0; j < M; j++)
+				for ( j = 0; j < M; j++)
 				{
 					T[j] = C[j];
 					P[j] = 0;
 				}
-				for (int j = 0; j < M; j++)
+				for ( j = 0; j < M; j++)
 				{
 					if (B_[j] == 1)
 						P[j + N_ - m] = 1;
 				}
-				for (int j = 0; j < M; j++)
+				for ( j = 0; j < M; j++)
 					C[j] = (C[j] + P[j]) % 2;
 				if (L <= N_ / 2)
 				{
 					L = N_ + 1 - L;
 					m = N_;
-					for (int j = 0; j<M; j++)
+					for ( j = 0; j<M; j++)
 						B_[j] = T[j];
 				}
 			}
@@ -133,8 +134,8 @@ double LinearComplexity(double alpha, unsigned char *data, int bits, int M, doub
 	double *d_partial_sum;
 	gpu_param *M_gpu;
 	unsigned char *data_gpu;
-//	start = clock();
 
+//	start = clock();
 	cudaMalloc((void**)&d_partial_sum,N*size);
 	cudaMalloc((void**)&M_gpu,sizeof(gpu_param));
 	cudaMalloc((void**)&data_gpu,(bits / 8)*sizeof(unsigned char));
@@ -150,6 +151,7 @@ double LinearComplexity(double alpha, unsigned char *data, int bits, int M, doub
 
 	//将结果传回到主机端
 	cudaMemcpy(h_partial_sum, d_partial_sum, size*N, cudaMemcpyDeviceToHost);
+
 
 	for(int i = 0;i<N;i++){
 		if (h_partial_sum[i] <= -2.5)
@@ -168,7 +170,8 @@ double LinearComplexity(double alpha, unsigned char *data, int bits, int M, doub
 		v[6]++;
 
 	}
-
+	//end = clock();
+	//printf("time:%f\n",(double)(end-start)/CLOCKS_PER_SEC);
 		//Compute P-value
 		double v_obs = 0.00;
 	//	double p_value;

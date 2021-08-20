@@ -83,7 +83,7 @@ NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int
 				sequence[i_*m+k_] = bit;
 			}
 	}
-			printf("N:%d , M:%d , m:%d , lam:%f , var:%f\n",N,M,m,lambda,varWj);
+			//printf("N:%d , M:%d , m:%d , lam:%f , var:%f\n",N,M,m,lambda,varWj);
 	// for (i_ = 0; i_ < (MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])); i_++){
 	// 	for (k_=0; k_<m; k_++ ) {
 	// 		printf("%x",sequence[i_*m+k_]);
@@ -94,10 +94,10 @@ NonOverlappingTemplateMatchings(double alpha, unsigned char *data, int bits, int
 	/////////////////////////////////////////////
 		for( jj=0; jj<MIN(MAXNUMOFTEMPLATES, numOfTemplates[m]); jj++ ) {
 			sum = 0;
-			for (k_=0; k_<m; k_++ ) {
-				printf("%x",sequence[jj*m+k_]);
-			}
-			printf("\n");
+			// for (k_=0; k_<m; k_++ ) {
+			// 	printf("%x",sequence[jj*m+k_]);
+			// }
+			// printf("\n");
 
 			s = clock();
 			for ( k=0; k<=K; k++ )

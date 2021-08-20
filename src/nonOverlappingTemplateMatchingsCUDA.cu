@@ -30,9 +30,62 @@ __device__ int MINVALUE(int a,int b){
 
 	return a > b ? b : a;
 }
+__global__ void nonoverlapKernel(int* WJ, double *CHI2_gpu, gpu_param *M_gpu, unsigned char* data, unsigned char*sequence){
 
+	int  i, jj , k , j , match, K = 5;;
+	unsigned int  W_obs, nu[6];
+	double sum,chi2;
+	int		numOfTemplates[100] = {0, 0, 2, 4, 6, 12, 20, 40, 74, 148, 284, 568, 1116,
+		2232, 4424, 8848, 17622, 35244, 70340, 140680, 281076, 562152};
+
+	int N = M_gpu->N;
+	int M = M_gpu->M;
+	int m = M_gpu->m;
+	double lambda = M_gpu->lambda;
+	double varWj = M_gpu->varWj;
+
+
+	// unsigned int *Wj = NULL;
+	// if ( (Wj = (unsigned int*)malloc(148*N*sizeof(unsigned int))) == NULL ) {
+	// 		return ;
+	// 	}
+	//确定索引
+	int threadId = blockIdx.x *blockDim.x + threadIdx.x;  
+	int blockID = blockIdx.x;
+	int tid = threadIdx.x;
+
+
+	if(tid<MINVALUE(MAXNUMOFTEMPLATES, numOfTemplates[m]))
+	{
+
+		//printf("N:%d , M:%d , m:%d , lam:%f , var:%f\n",N,M,m,lambda,varWj);
+		//sum = 0;
+		// for ( k=0; k<=K; k++ )
+		// 	nu[k] = 0;
+		// for ( i=0; i<N; i++ ) {
+			W_obs = 0;
+			for ( j=0; j<M-m+1; j++ ) {
+				match = 1;
+				for ( k=0; k<m; k++ ) {
+					if ( (int)sequence[tid*m+k] != (int)GET_EPSILON1(data,blockID*M+j+k) ) {
+						match = 0;
+						break;
+					}
+				}
+				if ( match == 1 ) {
+					W_obs++;
+					j += m-1;
+				}
+			}
+			//Wj[tid*N+blockID] = W_obs;
+			WJ[tid*N+blockID] = W_obs;
+		//printf("tid:%d bid:%d wj:%d\n",tid,blockID,WJ[tid*N+blockID]);
+	}
+
+
+}
  
-__global__ void ReductionSum(double *CHI2_gpu, gpu_param *M_gpu, unsigned char* data, unsigned char*sequence){
+__global__ void ReductionSum(int* WJ_gpu,double *CHI2_gpu, gpu_param *M_gpu, unsigned char* data, unsigned char*sequence){
 
 	int  i, jj , k , j , match, K = 5;;
 	unsigned int  W_obs, nu[6];
@@ -53,6 +106,7 @@ __global__ void ReductionSum(double *CHI2_gpu, gpu_param *M_gpu, unsigned char* 
 		}
 	//确定索引
 	int threadId = blockIdx.x *blockDim.x + threadIdx.x;  
+	int blockID = blockIdx.x;
 
 
 	if(threadId<MINVALUE(MAXNUMOFTEMPLATES, numOfTemplates[m]))
@@ -79,6 +133,8 @@ __global__ void ReductionSum(double *CHI2_gpu, gpu_param *M_gpu, unsigned char* 
 			}
 			Wj[i] = W_obs;
 		}
+
+
 		sum = 0;
 		chi2 = 0.0;                                   /* Compute Chi Square */
 		for ( i=0; i<N; i++ ) {
@@ -89,12 +145,12 @@ __global__ void ReductionSum(double *CHI2_gpu, gpu_param *M_gpu, unsigned char* 
 			chi2 += pow(((double)Wj[i] - lambda)/pow(varWj, 0.5), 2);
 		}
 		CHI2_gpu[threadId] = chi2;
+		printf("CH2gpu:%f\n",CHI2_gpu[threadId]);
+		//float p_value = cephes_igamc(N/2.0, chi2/2.0);
 	}
-
-	
-
-
 }
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
           N O N O V E R L A P P I N G  T E M P L A T E  T E S T
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -140,6 +196,7 @@ NonOverlappingTemplateMatchingsCUDA(double alpha, unsigned char *data, int bits,
 	}
 	else {
 
+
 		if ( numOfTemplates[m] < MAXNUMOFTEMPLATES )
 			SKIP = 1;
 		else
@@ -157,68 +214,104 @@ NonOverlappingTemplateMatchingsCUDA(double alpha, unsigned char *data, int bits,
 			sum += pi[i-1];
 		}
 		pi[K] = 1 - sum;
-
+		
 	/////////////////////////////////////////////
-	for (i_ = 0; i_ < (MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])); i_++){
-			for (k_=0; k_<m; k_++ ) {
-				fscanf(fp, "%d", &bit);
-				sequence1[i_][k_] = bit;
-				sequence[i_*m+k_] = bit;
-			}
+		for (i_ = 0; i_ < (MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])); i_++){
+				for (k_=0; k_<m; k_++ ) {
+					fscanf(fp, "%d", &bit);
+					sequence1[i_][k_] = bit;
+					sequence[i_*m+k_] = bit;
+				}
 	}
-	/////////////////////////////////////////////
-	//分配host变量
-	gpu_param M_cpu;
-	M_cpu.M = M;
-	M_cpu.N = N;
-	M_cpu.m = m;
-	M_cpu.lambda = lambda;
-	M_cpu.varWj = varWj;
-	double CHI2[MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])] = {0.0};
+	
+		/////////////////////////////////////////////
+		//分配host变量
+		gpu_param M_cpu;
+		M_cpu.M = M;
+		M_cpu.N = N;
+		M_cpu.m = m;
+		M_cpu.lambda = lambda;
+		M_cpu.varWj = varWj;
+		double CHI2[MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])] = {0.0};
+		int WJ[148*8] = {0};
 
 
 	//分配device变量
-	gpu_param *M_gpu;
-	unsigned char *data_gpu;
-	double *CHI2_gpu;
-	cudaMalloc((void**)&CHI2_gpu,(MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])*sizeof(double)));
 
-	unsigned char *sequenceGPU ;
-	cudaMalloc((void**)&sequenceGPU,MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])*m*sizeof(double));
-
-	cudaMalloc((void**)&M_gpu,sizeof(gpu_param));
-	cudaMalloc((void**)&data_gpu,(bits / 8)*sizeof(unsigned char));
-
-	cudaMemcpy(M_gpu, &M_cpu, sizeof(gpu_param), cudaMemcpyHostToDevice);
-	cudaMemcpy(data_gpu, data, (bits / 8)*sizeof(unsigned char), cudaMemcpyHostToDevice);
-	cudaMemcpy(sequenceGPU, sequence, MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])*m*sizeof(double), cudaMemcpyHostToDevice);
-
-	int blocksPerGrid = (MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])+512-1)/512;
-
-	ReductionSum<<<blocksPerGrid,512>>>(CHI2_gpu,M_gpu,data_gpu,sequenceGPU);
+	
 
 
-	//将结果传回到主机端
-	cudaMemcpy(CHI2, CHI2_gpu, MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])*sizeof(double), cudaMemcpyDeviceToHost);
+		gpu_param *M_gpu;
+		unsigned char *data_gpu;
+		double *CHI2_gpu;
+		cudaMalloc((void**)&CHI2_gpu,(MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])*sizeof(double)));
 
+		unsigned char *sequenceGPU ;
+		cudaMalloc((void**)&sequenceGPU,MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])*m*sizeof(double));
 
+		cudaMalloc((void**)&M_gpu,sizeof(gpu_param));
+		cudaMalloc((void**)&data_gpu,(bits / 8)*sizeof(unsigned char));
+
+		int * WJ_gpu;
+		cudaMalloc((void**)&WJ_gpu,148*8*sizeof(int));
+
+		cudaMemcpy(M_gpu, &M_cpu, sizeof(gpu_param), cudaMemcpyHostToDevice);
+		cudaMemcpy(data_gpu, data, (bits / 8)*sizeof(unsigned char), cudaMemcpyHostToDevice);
+		cudaMemcpy(sequenceGPU, sequence, MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])*m*sizeof(double), cudaMemcpyHostToDevice);
+
+		int blocksPerGrid = (MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])+512-1)/512;
+
+		nonoverlapKernel<<<8,148>>>(WJ_gpu,CHI2_gpu,M_gpu,data_gpu,sequenceGPU);
+
+		// s = clock();
+		//将结果传回到主机端
+		cudaMemcpy(WJ, WJ_gpu, 148*8*sizeof(int), cudaMemcpyDeviceToHost);
+		//cudaMemcpy(CHI2, CHI2_gpu, MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])*sizeof(double), cudaMemcpyDeviceToHost);
+		// e = clock();
+		// printf("1time:%f\n",(double)(e-s)/CLOCKS_PER_SEC);
 		for( jj=0; jj<MIN(MAXNUMOFTEMPLATES, numOfTemplates[m]); jj++ ) {
-			//printf("CHI2:%f    ",CHI2[jj]);
-			p_value = cephes_igamc(N/2.0, CHI2[jj]/2.0);
-		
+			sum = 0;
+			chi2 = 0.0;                                   /* Compute Chi Square */
+			//printf("wj:%d\n",WJ[jj]);
+			for ( i=0; i<N; i++ ) {
+			//	if ( m == 10 )
+				//	fprintf(stats[TEST_NONPERIODIC], "%3d  ", Wj[i]);
+			//	else
+				//	fprintf(stats[TEST_NONPERIODIC], "%4d ", Wj[i]);
+				//printf("WJ:%d\n",WJ[i]);
+				chi2 += pow(((double)WJ[jj*N+i] - lambda)/pow(varWj, 0.5), 2);
+			}
+			p_value = cephes_igamc(N/2.0, chi2/2.0);
 			if ( isNegative(p_value) || isGreaterThanOne(p_value) )
-				printf("\t\tWARNING:  P_VALUE IS OUT OF RANGE.\n");
+			printf("\t\tWARNING:  P_VALUE IS OUT OF RANGE.\n");
 
-		//	printf("%9.6f %f %s %3d\n", CHI2[jj], p_value, p_value < alpha ? "FAILURE" : "SUCCESS", jj);
+			//printf("%9.6f %f %s %3d\n", chi2, p_value, p_value < alpha ? "FAILURE" : "SUCCESS", jj);
 			if ( SKIP > 1 )
 				fseek(fp, (long)(SKIP-1)*2*m, SEEK_CUR);
-		}
+		//}
+			}
+			//free(WJ_gpu);
+
+
+		// for( jj=0; jj<MIN(MAXNUMOFTEMPLATES, numOfTemplates[m]); jj++ ) {
+		// 	printf("CHI2:%f    \n",CHI2[jj]);
+		// 	p_value = cephes_igamc(N/2.0, CHI2[jj]/2.0);
+		
+		// 	if ( isNegative(p_value) || isGreaterThanOne(p_value) )
+		// 		printf("\t\tWARNING:  P_VALUE IS OUT OF RANGE.\n");
+
+		// //	printf("%9.6f %f %s %3d\n", CHI2[jj], p_value, p_value < alpha ? "FAILURE" : "SUCCESS", jj);
+		// 	if ( SKIP > 1 )
+		// 		fseek(fp, (long)(SKIP-1)*2*m, SEEK_CUR);
+		// }
+
 	}
 
 	if ( sequence != NULL )
 		free(sequence);
 
 	free(Wj);
+
 
     if ( fp != NULL )
         fclose(fp);

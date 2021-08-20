@@ -54,3 +54,7 @@ Copyright (C) Wuhan University 2019
 
     为nonOverlappingTemplateMatchings进行了并行优化，按照分块并行计算，其余地方并没有进行修改，只是将最终p-value的计算结果移至cpu进行操作，
     在gpu中只能进行简单的运算。
+"2021.8.20 10:20"
+
+    继续优化nonOverlappingTemplateMatchings，使用N个block，每个block有148个线程，之前只是将模版的匹配进行并行，现在将数据的分块计算也进行并行。
+    主要修改在nonoverlapKernel中体现。
