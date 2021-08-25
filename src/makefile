@@ -20,7 +20,7 @@ OBJ = $(OBJDIR)/assess.o $(OBJDIR)/frequency.o $(OBJDIR)/blockFrequency.o \
 	  $(OBJDIR)/RunsDistribution.o $(OBJDIR)/linearComplexitycuda.o \
 	  $(OBJDIR)/nonOverlappingTemplateMatchings.o $(OBJDIR)/overlappingTemplateMatchings.o \
 	  $(OBJDIR)/randomExcursions.o $(OBJDIR)/randomExcursionsVariant.o \
-	  $(OBJDIR)/nonOverlappingTemplateMatchingsCUDA.o 
+	  $(OBJDIR)/nonOverlappingTemplateMatchingsCUDA.o $(OBJDIR)/LinearANDnonoverlap.o
 #  -L/usr/local/cuda/lib64 -lcuda -lcudart -lcublas -lcurand -lcudnn
 assess: $(OBJ)
 	$(CC) -o $@ $(OBJ) -lm -lcudart -lcuda $(NVCCFLAG) -lstdc++
@@ -78,6 +78,9 @@ $(OBJDIR)/linearComplexity.o: $(SRCDIR)/LinearComplexity.c cephes.h rats.h
 
 $(OBJDIR)/linearComplexitycuda.o: $(SRCDIR)/LinearComplexityCUDA.cu  rats.h
 	$(NVCC) -o $@ -c $(SRCDIR)/LinearComplexityCUDA.cu
+
+$(OBJDIR)/LinearANDnonoverlap.o: $(SRCDIR)/LinearANDnonoverlap.cu  rats.h cephes.h
+	$(NVCC) -o $@ -c $(SRCDIR)/LinearANDnonoverlap.cu
 
 $(OBJDIR)/nonOverlappingTemplateMatchingsCUDA.o: $(SRCDIR)/nonOverlappingTemplateMatchingsCUDA.cu  rats.h cephes.h
 	$(NVCC) -o $@ -c $(SRCDIR)/nonOverlappingTemplateMatchingsCUDA.cu

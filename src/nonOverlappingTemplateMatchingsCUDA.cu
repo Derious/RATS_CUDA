@@ -158,6 +158,7 @@ __global__ void ReductionSum(int* WJ_gpu,double *CHI2_gpu, gpu_param *M_gpu, uns
 int
 NonOverlappingTemplateMatchingsCUDA(double alpha, unsigned char *data, int bits, int m)
 {
+	cudaDeviceReset();
     int n = bits;
 	int		numOfTemplates[100] = {0, 0, 2, 4, 6, 12, 20, 40, 74, 148, 284, 568, 1116,
 						2232, 4424, 8848, 17622, 35244, 70340, 140680, 281076, 562152};
@@ -266,9 +267,15 @@ NonOverlappingTemplateMatchingsCUDA(double alpha, unsigned char *data, int bits,
 		// s = clock();
 		//将结果传回到主机端
 		cudaMemcpy(WJ, WJ_gpu, 148*8*sizeof(int), cudaMemcpyDeviceToHost);
+		cudaFree(WJ_gpu);
+		cudaFree(CHI2_gpu);
+		cudaFree(M_gpu);
+		cudaFree(data_gpu);
+		cudaFree(sequenceGPU);
 		//cudaMemcpy(CHI2, CHI2_gpu, MIN(MAXNUMOFTEMPLATES, numOfTemplates[m])*sizeof(double), cudaMemcpyDeviceToHost);
 		// e = clock();
 		// printf("1time:%f\n",(double)(e-s)/CLOCKS_PER_SEC);
+		int flag = 1;
 		for( jj=0; jj<MIN(MAXNUMOFTEMPLATES, numOfTemplates[m]); jj++ ) {
 			sum = 0;
 			chi2 = 0.0;                                   /* Compute Chi Square */
@@ -282,12 +289,13 @@ NonOverlappingTemplateMatchingsCUDA(double alpha, unsigned char *data, int bits,
 				chi2 += pow(((double)WJ[jj*N+i] - lambda)/pow(varWj, 0.5), 2);
 			}
 			p_value = cephes_igamc(N/2.0, chi2/2.0);
-			if ( isNegative(p_value) || isGreaterThanOne(p_value) )
-			printf("\t\tWARNING:  P_VALUE IS OUT OF RANGE.\n");
+			if (p_value < alpha) flag = 0;
+		// 	if ( isNegative(p_value) || isGreaterThanOne(p_value) )
+		// 	printf("\t\tWARNING:  P_VALUE IS OUT OF RANGE.\n");
 
-			//printf("%9.6f %f %s %3d\n", chi2, p_value, p_value < alpha ? "FAILURE" : "SUCCESS", jj);
-			if ( SKIP > 1 )
-				fseek(fp, (long)(SKIP-1)*2*m, SEEK_CUR);
+		//	printf("%9.6f %f %s %3d\n", chi2, p_value, p_value < alpha ? "FAILURE" : "SUCCESS", jj);
+		// 	if ( SKIP > 1 )
+		// 		fseek(fp, (long)(SKIP-1)*2*m, SEEK_CUR);
 		//}
 			}
 			//free(WJ_gpu);
@@ -316,7 +324,7 @@ NonOverlappingTemplateMatchingsCUDA(double alpha, unsigned char *data, int bits,
     if ( fp != NULL )
         fclose(fp);
    // printf("p_value: %f\n",p_value);
-    if (p_value < alpha)
-		return 0;
-	return 1;
+    // if (p_value < alpha)
+	// 	return 0;
+	// return 1;
 }

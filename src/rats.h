@@ -190,6 +190,8 @@ double LinearComplexity(double alpha, unsigned char *data, int bits, int M, doub
 
 int LinearComplexity1(double alpha, unsigned char *data, int bits, int M, LinearComplexity_V *value);
 int LinearComplexity0(double alpha, unsigned char *data, int bits, int M, LinearComplexity_V *value);
+double LinearANDnonoverlap(double alpha, unsigned char *data, int bits, int M, double u, int sign, int m, LinearComplexity_V *value);
+int LinearComplexityANDnonoverlap(double alpha, unsigned char *data, int bits, int M, int m_non, LinearComplexity_V *value);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 				ITEM-14: M A U R E R - U N I V E R S A L - T E S T

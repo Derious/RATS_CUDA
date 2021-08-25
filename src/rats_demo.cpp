@@ -10,15 +10,24 @@
 int rats_app_sts2(unsigned char *data, int bits){
 	double alpha = 0.01;
 	clock_t time_s, time_e;
-	time_s = clock();
-	if (!NonOverlappingTemplateMatchingsCUDA(alpha, data, bits, 9))	return 0;
-//	if (!NonOverlappingTemplateMatchingsCUDA(alpha, data, bits, 9))	return 0;
-	time_e = clock();
-	printf("RATS test flag is %d, cost time %.4f.\n", 16, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	// time_s = clock();
+	//if (!NonOverlappingTemplateMatchingsCUDA(alpha, data, bits, 9))	return 0;
+	// if (!NonOverlappingTemplateMatchingsCUDA(alpha, data, bits, 9))	return 0;
+	// time_e = clock();
+	// printf("RATS test flag is %d, cost time %.4f.\n", 16, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	// 	time_s = clock();
 	// if (!NonOverlappingTemplateMatchings(alpha, data, bits, 9))	return 0;
 	// time_e = clock();
 	// printf("RATS test flag is %d, cost time %.4f.\n", 16, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	// time_s = clock();
+	//if (!LinearComplexity1(alpha, data, bits, 500, NULL))	return 0;
+	// //if (!LinearComplexity1(alpha, data, bits, 500, NULL))	return 0;
+	// time_e = clock();
+	// printf("RATS test flag is %d, cost time %.4f.\n", 13, (double)(time_e - time_s) / CLOCKS_PER_SEC);
+	// time_s = clock();
+	if (!LinearComplexityANDnonoverlap(alpha, data, bits, 500, 9,NULL))	return 0;
+	// time_e = clock();
+	// printf("RATS test flag is %d, cost time %.4f.\n", 13, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 }
 
 
@@ -135,7 +144,11 @@ int rats_app_sts(unsigned char *data, int bits)
 	if (!RandomExcursionsVariant(alpha, data, bits))	return 0;
 	time_e = clock();
 	printf("RATS test flag is %d, cost time %.4f.\n", 19, (double)(time_e - time_s) / CLOCKS_PER_SEC);
-
+	//19-离散傅里叶检测
+	// time_s = clock();
+	// if (!LinearComplexityANDnonoverlap(alpha, data, bits, 500, 9,NULL))	return 0;
+	// time_e = clock();
+	// printf("RATS test flag is %d, cost time %.4f.\n", 20, (double)(time_e - time_s) / CLOCKS_PER_SEC);
 	return 1;
 }
 
@@ -168,12 +181,12 @@ int main()
 			}
 		}
 	}
-	#define ROUND	10
+	#define ROUND	1
 	//printf("1111111111111\n");
 	time_s = clock();
 	for (int i = 0; i < ROUND; i++)
 	{
-		flag = rats_app_sts(data, BITS);
+		flag = rats_app_sts2(data, BITS);
 		/* code */
 	}
 	

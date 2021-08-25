@@ -58,3 +58,8 @@ Copyright (C) Wuhan University 2019
 
     继续优化nonOverlappingTemplateMatchings，使用N个block，每个block有148个线程，之前只是将模版的匹配进行并行，现在将数据的分块计算也进行并行。
     主要修改在nonoverlapKernel中体现。
+
+"2021.8.25 11:00"
+
+    在新文件LinearANDnonoverlap.cu中，将线性复杂度以及非重复模板同时开启线程进行两项测试，将两项测试进行并行化的操作。测试1000000bit 所有项目
+    所花费的时间为1.0947s，对比之前的时间：1.8697s (突然发现GPU今晚的占用率很高，可能测试的并不准确，以后再测一遍！！)

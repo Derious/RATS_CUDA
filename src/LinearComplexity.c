@@ -48,18 +48,20 @@ int rats_Berlekamp_Massey(unsigned char *data, int offset, int bits)
 	B[0] = 1;
 	C[0] = 1;
 
-	//Make sequence s[n-1],s[n-2],...,s[1],s[0]
-	for (i = 0; i < n; i++)
-	{
-		s[i / 32] = (s[i / 32] << 1) + GET_EPSILON(data, offset + n - i -1);
-	}
+	// //Make sequence s[n-1],s[n-2],...,s[1],s[0]
+	// for (i = 0; i < n; i++)
+	// {
+	// 	s[i / 32] = (s[i / 32] << 1) + GET_EPSILON(data, offset + n - i -1);
+	// 	//s[i / 32] = (s[i / 32] << 1) + GET_EPSILON(data, offset + i);
+	// }
 
 	/* DETERMINE LINEAR COMPLEXITY */
 	for (N = 0; N < n; N++)
 	{
 		d = GET_EPSILON(data, offset + N);//C.bit0 == 1 forever
 		for (i = 1; i <= L; i++)
-			d += ((C[i / 32] >> (31 - i)) & 1) * GET_EPSILON(data, offset + N - i);
+			d += ((C[i / 32] >> (i)) & 1) * GET_EPSILON(data, offset + N - i);
+			// d += ((C[i / 32] >> (31 - i)) & 1) * GET_EPSILON(data, offset + N - i);
 		if (d = d % 2)
 		{
 			//P(D) = B(D) · D^(N−m).
@@ -104,8 +106,8 @@ int rats_Berlekamp_Massey(unsigned char *data, int offset, int bits)
 
 int LinearComplexity0(double alpha, unsigned char *data, int bits, int M, LinearComplexity_V *value)
 {
-	int       i, ii, j, d, N, L, m, N_, sign, K = 6;
-	double    p_value, v_obs, Ti, u;
+	int       i, ii, j, d, N, L, L1, m, N_, sign, K = 6;
+	double    p_value, v_obs, Ti,Ti1, u;
 	double    pi[7] = { 0.01047, 0.03125, 0.12500, 0.50000, 0.25000, 0.06250, 0.020833 };
 	int       v[7] = { 0, 0, 0, 0, 0, 0, 0 };
 	unsigned char  *T = NULL, *P = NULL, *B_ = NULL, *C = NULL;
@@ -128,15 +130,15 @@ int LinearComplexity0(double alpha, unsigned char *data, int bits, int M, Linear
 
 	//calculate the theoretical mean
 	sign = ((M + 1) & 1) ? -1 : 1;
-	printf("sign:%d",sign);
+	//printf("sign:%d",sign);
 	u = M / 2.0 + (9.0 + sign) / 36.0 - 1.0 / pow(2, M) * (M / 3.0 + 2.0 / 9.0);
 	sign = (M & 1) ? -1 : 1;
-	printf("M:%d , u:%f , sign:%d\n",M,u,sign);
+//	printf("M:%d , u:%f , sign:%d\n",M,u,sign);
 
 
 	for (ii = 0; ii<N; ii++)
 	{
-		s = clock();
+	//	s = clock();
 		for (i = 0; i<M; i++) {
 			B_[i] = 0;
 			C[i] = 0;
@@ -179,13 +181,16 @@ int LinearComplexity0(double alpha, unsigned char *data, int bits, int M, Linear
 			}
 		}
 
-		//if (L != rats_Berlekamp_Massey(data, ii*M, M))
-		//{
-		//	L = rats_Berlekamp_Massey(data, ii*M, M);
-		//}
+	//	if (L != rats_Berlekamp_Massey(data, ii*M, M))
+	//	{
+	//		L1 = rats_Berlekamp_Massey(data, ii*M, M);
+			//printf("L:%d L1:%d\n",L,L1);
+	//	}
 
 		//Calculate Ti, and record the Ti values in v0,…, v6
 		Ti = sign * (L - u) + 2.0 / 9.0;
+		// Ti1 = sign * (L1 - u) + 2.0 / 9.0;
+		// printf("L:%f L1:%f\n",Ti,Ti1);
 
 		if (Ti <= -2.5)
 			v[0]++;
@@ -202,8 +207,10 @@ int LinearComplexity0(double alpha, unsigned char *data, int bits, int M, Linear
 		else
 			v[6]++;
 
-	e = clock();
-	dur = (float)(e-s)/CLOCKS_PER_SEC;
+			
+
+	// e = clock();
+	// dur = (float)(e-s)/CLOCKS_PER_SEC;
 	//printf("%d liner time:%f\n",ii,dur);
 	}
 
@@ -223,7 +230,7 @@ int LinearComplexity0(double alpha, unsigned char *data, int bits, int M, Linear
 	}
 	p_value = cephes_igamc(3.0, v_obs / 2.0);
 
-	printf("obs: %f\n",v_obs);
+	//printf("obs: %f\n",v_obs);
 
 	//TODO: return value
 
@@ -243,6 +250,29 @@ int LinearComplexity1(double alpha, unsigned char *data, int bits, int M, Linear
 
 
 	double v_obs = LinearComplexity(alpha,data,bits,M,u,sign,value);
+//	printf("v_obs: %f\n",v_obs);
+	double p_value = cephes_igamc(3.0, v_obs / 2.0);
+
+
+
+	//TODO: return value
+
+	if (p_value < alpha)
+		return 0;
+	return 1;
+}
+
+int LinearComplexityANDnonoverlap(double alpha, unsigned char *data, int bits, int M, int m_non, LinearComplexity_V *value){
+
+	int   sign, K = 6;
+	double u;
+	sign = ((M + 1) & 1) ? -1 : 1;
+	u = M / 2.0 + (9.0 + sign) / 36.0 - 1.0 / pow(2, M) * (M / 3.0 + 2.0 / 9.0);
+	sign = (M & 1) ? -1 : 1;
+//	printf("M:%d , u:%f , sign:%d\n",M,u,sign);
+
+
+	double v_obs = LinearANDnonoverlap(alpha,data,bits,M,u,sign,m_non,value);
 //	printf("v_obs: %f\n",v_obs);
 	double p_value = cephes_igamc(3.0, v_obs / 2.0);
 
